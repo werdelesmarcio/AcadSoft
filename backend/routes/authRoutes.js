@@ -29,8 +29,21 @@ router.post('/register', async (req, res) => {
       passwordHash: hash,
       type
     })
+    const token = jwt.sign({ uid: user.uid, type: user.type }, JWT_SECRET, {
+      expiresIn: '7d'
+    })
 
-    res.json({ message: 'Usuário registrado com sucesso', uid: user.uid })
+    res.json({
+      message: 'Usuário registrado com sucesso',
+      uid: user.uid,
+      token,
+      user: {
+        uid: user.uid,
+        email: user.email,
+        name: user.name,
+        type: user.type
+      }
+    })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

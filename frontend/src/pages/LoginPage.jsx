@@ -23,11 +23,25 @@ export default function LoginPage({ setUser, setToken }) {
           body: JSON.stringify({ email, password })
         }
       )
-      if (!response.ok) {
-        const errData = await response.json()
-        throw new Error(errData.error || 'Email ou senha incorretos')
+      const text = await response.text()
+      let data = null
+
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          throw new Error('Resposta inválida do servidor')
+        }
       }
-      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Email ou senha incorretos')
+      }
+
+      if (!data || !data.token || !data.user) {
+        throw new Error('Resposta inválida do servidor')
+      }
+
       setToken(data.token)
       setUser(data.user)
       navigate('/')

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/auth.css'
 
-export default function RegisterPage() {
+export default function RegisterPage({ setUser, setToken }) {
   const navigate = useNavigate()
   const [userType, setUserType] = useState('aluno') // aluno ou instrutor
   const [formData, setFormData] = useState({
@@ -48,40 +48,85 @@ export default function RegisterPage() {
           })
         }
       )
-      if (!authResponse.ok) {
-        const errData = await authResponse.json()
-        throw new Error(errData.error || 'Falha no registro')
+
+      const authText = await authResponse.text()
+      let authData = null
+
+      if (authText) {
+        try {
+          authData = JSON.parse(authText)
+        } catch (parseError) {
+          throw new Error('Resposta inválida do servidor de autenticação')
+        }
       }
-      const authData = await authResponse.json()
+
+      if (!authResponse.ok) {
+        throw new Error(authData?.error || 'Falha no registro')
+      }
+
+      if (!authData || !authData.uid || !authData.token || !authData.user) {
+        throw new Error('Resposta inválida do servidor de autenticação')
+      }
+
+      // guardar usuário e token para já autenticar após o cadastro
+      if (setToken) setToken(authData.token)
+      if (setUser) setUser(authData.user)
+
       const uid = authData.uid
 
       // criar dados específicos de aluno/instrutor
       const endpoint =
-        userType === 'aluno' ? '/api/aluno/register' : '/api/instrutor/register'
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          uid,
-          email: formData.email,
-          name: formData.name,
-          telefone: formData.telefone,
-          ...(userType === 'aluno' && {
-            idade: formData.idade,
-            objetivo: formData.objetivo
-          }),
-          ...(userType === 'instrutor' && {
-            especialidade: formData.especialidade,
-            horarios: formData.horarios
-          })
-        })
-      })
+        userType === 'aluno' ? '/aluno/register' : '/instrutor/register'
 
-      if (response.ok) {
-        navigate('/login')
+      const detailsResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}${endpoint}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authData.token}`
+          },
+          body: JSON.stringify({
+            uid,
+            email: formData.email,
+            name: formData.name,
+            telefone: formData.telefone,
+            ...(userType === 'aluno' && {
+              idade: formData.idade,
+              objetivo: formData.objetivo
+            }),
+            ...(userType === 'instrutor' && {
+              especialidade: formData.especialidade,
+              horarios: formData.horarios
+            })
+          })
+        }
+      )
+
+      const detailsText = await detailsResponse.text()
+      let detailsData = null
+
+      if (detailsText) {
+        try {
+          detailsData = JSON.parse(detailsText)
+        } catch {
+          // se não for JSON válido, segue com mensagem genérica
+        }
       }
+
+      if (!detailsResponse.ok) {
+        throw new Error(
+          detailsData?.error ||
+            `Falha ao registrar ${
+              userType === 'aluno' ? 'aluno' : 'instrutor'
+            }`
+        )
+      }
+
+      // cadastro completo, ir direto para o dashboard
+      navigate('/')
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Erro inesperado ao registrar')
     } finally {
       setLoading(false)
     }

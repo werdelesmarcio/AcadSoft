@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import Aluno from '../models/aluno.js'
-import User from '../models/user.js'
 
 const router = Router()
 
@@ -23,9 +22,6 @@ router.post('/register', async (req, res) => {
     }
 
     await Aluno.create(alunoData)
-    
-    // Atualizar documento de usuário
-    await User.create({ uid, email, name, type: 'aluno' })
 
     res.json({ message: 'Aluno registrado com sucesso' })
   } catch (error) {
