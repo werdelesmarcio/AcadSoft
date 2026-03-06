@@ -1,0 +1,5 @@
+# Arquivo para armazenar scripts Python de automação
+
+## Exemplo: análise de dados, relatórios, etc.
+
+# requirements.txt será usado para instalar dependências Python
