@@ -23,7 +23,11 @@ router.put('/:userId', async (req, res) => {
     const { userId } = req.params
     const updateData = req.body
 
-    const user = await User.findOneAndUpdate({ uid: userId }, updateData, { new: true })
+    const user = await User.findOneAndUpdate(
+      { uid: userId },
+      updateData,
+      { returnDocument: 'after' }
+    )
     if (!user) {
       return res.status(404).json({ error: 'Usuário não encontrado' })
     }

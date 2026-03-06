@@ -6,7 +6,7 @@ const router = Router()
 // Registrar novo instrutor
 router.post('/register', async (req, res) => {
   try {
-    const { uid, email, name, especialidade, telefone, horarios } = req.body
+    const { uid, email, name, especialidade, telefone, horarios, foto } = req.body
 
     const instrutorData = {
       uid,
@@ -14,6 +14,7 @@ router.post('/register', async (req, res) => {
       name,
       especialidade,
       telefone,
+      foto,
       horarios: horarios || [], // Array de horários disponíveis
       exercicios: [],
       alunos: [],
@@ -71,7 +72,7 @@ router.post('/:instrutorId/exercicios', async (req, res) => {
     const instrutor = await Instrutor.findOneAndUpdate(
       { uid: instrutorId },
       { $push: { exercicios: exercicio } },
-      { new: true }
+      { returnDocument: 'after' }
     )
 
     if (!instrutor) {
@@ -99,7 +100,7 @@ router.post('/:instrutorId/horarios', async (req, res) => {
     const instrutor = await Instrutor.findOneAndUpdate(
       { uid: instrutorId },
       { $push: { horarios: horario } },
-      { new: true }
+      { returnDocument: 'after' }
     )
 
     if (!instrutor) {

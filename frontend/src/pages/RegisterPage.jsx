@@ -14,7 +14,8 @@ export default function RegisterPage({ setUser, setToken }) {
     idade: '',
     objetivo: '',
     especialidade: '',
-    horarios: []
+    horarios: [],
+    foto: ''
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -91,6 +92,7 @@ export default function RegisterPage({ setUser, setToken }) {
             email: formData.email,
             name: formData.name,
             telefone: formData.telefone,
+            foto: formData.foto,
             ...(userType === 'aluno' && {
               idade: formData.idade,
               objetivo: formData.objetivo
@@ -182,6 +184,18 @@ export default function RegisterPage({ setUser, setToken }) {
             value={formData.telefone}
             onChange={handleChange}
             required
+          />
+
+          <input
+            type="url"
+            name="foto"
+            placeholder={
+              userType === 'aluno'
+                ? 'URL da foto do aluno (opcional)'
+                : 'URL da foto do instrutor (opcional)'
+            }
+            value={formData.foto}
+            onChange={handleChange}
           />
 
           {userType === 'aluno' && (

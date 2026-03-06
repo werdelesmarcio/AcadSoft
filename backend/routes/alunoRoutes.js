@@ -6,7 +6,7 @@ const router = Router()
 // Registrar novo aluno
 router.post('/register', async (req, res) => {
   try {
-    const { uid, email, name, idade, objetivo, telefone, instrutorId } = req.body
+    const { uid, email, name, idade, objetivo, telefone, instrutorId, foto } = req.body
 
     const alunoData = {
       uid,
@@ -15,6 +15,7 @@ router.post('/register', async (req, res) => {
       idade,
       objetivo,
       telefone,
+      foto,
       instrutorId: instrutorId || null,
       agendamentos: [],
       historico: [],
@@ -52,7 +53,7 @@ router.put('/:alunoId/instrutor', async (req, res) => {
     const aluno = await Aluno.findOneAndUpdate(
       { uid: alunoId },
       { instrutorId },
-      { new: true }
+      { returnDocument: 'after' }
     )
 
     if (!aluno) {

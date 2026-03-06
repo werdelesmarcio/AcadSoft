@@ -20,6 +20,7 @@ const alunoSchema = new mongoose.Schema({
   idade: Number,
   objetivo: String,
   telefone: String,
+  foto: String,
   instrutorId: String,
   agendamentos: [agendamentoSchema],
   historico: [mongoose.Schema.Types.Mixed],

@@ -22,6 +22,7 @@ const instrutorSchema = new mongoose.Schema({
   name: { type: String, required: true },
   especialidade: String,
   telefone: String,
+  foto: String,
   horarios: [horarioSchema],
   exercicios: [exercicioSchema],
   alunos: [String], // array of aluno uid

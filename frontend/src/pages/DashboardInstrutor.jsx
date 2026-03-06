@@ -134,11 +134,27 @@ export default function DashboardInstrutor({ user, token, onLogout }) {
           <section>
             <h2>Meu Perfil</h2>
             {instrutor && (
-              <div className="perfil-info">
-                <p><strong>Nome:</strong> {instrutor.name}</p>
-                <p><strong>Email:</strong> {instrutor.email}</p>
-                <p><strong>Especialidade:</strong> {instrutor.especialidade}</p>
-                <p><strong>Telefone:</strong> {instrutor.telefone}</p>
+              <div className="perfil-card">
+                <h3 className="perfil-card-title">Dados do instrutor</h3>
+                <div className="perfil-card-body">
+                  <div className="perfil-foto-wrapper">
+                    {instrutor.foto ? (
+                      <img
+                        src={instrutor.foto}
+                        alt={`Foto de ${instrutor.name}`}
+                        className="perfil-foto"
+                      />
+                    ) : (
+                      <div className="perfil-foto placeholder">
+                        Sem foto
+                      </div>
+                    )}
+                  </div>
+                  <p><strong>Nome:</strong> {instrutor.name}</p>
+                  <p><strong>Email:</strong> {instrutor.email}</p>
+                  <p><strong>Especialidade:</strong> {instrutor.especialidade}</p>
+                  <p><strong>Telefone:</strong> {instrutor.telefone}</p>
+                </div>
               </div>
             )}
           </section>
